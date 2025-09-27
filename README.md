@@ -219,7 +219,3 @@ Este projeto foi desenvolvido como exercício integrador para demonstrar conheci
 ## 📄 Licença
 
 Este projeto foi desenvolvido para fins educacionais como parte do curso de Residência em Robótica e IA - CIn/Softex.
-
----
-
-**Desenvolvido com ❤️ usando Python**
