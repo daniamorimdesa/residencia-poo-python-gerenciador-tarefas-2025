@@ -1,0 +1,125 @@
+Exercício Integrador — Gerenciador de Tarefas
+Objetivo
+Implementar um sistema simples de gerenciamento de tarefas em Python, com suporte a:
+
+Enum com propriedades → para representar prioridades.
+Descritores → para validar strings não vazias e datas não passadas.
+dataclasses com InitVar → para integrar valores recebidos no construtor e validar via descritores.
+Polimorfismo leve (uso de __str__) para exibir tarefas formatadas.
+Persistência em arquivos CSV e JSON.
+Interface de linha de comando (CLI) com menu interativo.
+Parte 1 — Enum Prioridade
+Crie uma enum.Enum chamada Prioridade com valores:
+
+BAIXA, MEDIA, ALTA.
+Adicione uma propriedade peso que retorna um número inteiro usado para ordenação (ex.: ALTA=3, MEDIA=2, BAIXA=1).
+
+Sobrescreva __str__ para que a exibição seja apenas o nome (ALTA, MEDIA, BAIXA).
+
+
+
+
+Parte 2 — Descritores de Validação
+NaoVazio:
+
+Aceita apenas str.
+Rejeita strings vazias ou só com espaços.
+
+DataNaoPassada:
+
+Aceita apenas objetos datetime.date.
+Rejeita datas anteriores a hoje (mas aceita a data de hoje).
+Ambos devem implementar __set_name__, __get__, __set__.
+
+
+
+
+Parte 3 — Dataclass Tarefa
+Use @dataclass para definir Tarefa.
+
+Atributos:
+
+nome → validado por NaoVazio.
+prazo → validado por DataNaoPassada.
+prioridade: Prioridade → padrão Prioridade.MEDIA.
+concluida: bool → padrão False.
+Use InitVar para _nome e _prazo recebidos no __init__, de forma que o __post_init__ dispare os descritores para validação.
+
+Implemente __str__ para exibir a tarefa no formato:
+
+[PRIORIDADE] YYYY-MM-DD  Nome da tarefa  (concluída: ✓/ )
+
+
+
+Parte 4 — Classe GerenciadorTarefas
+Implemente métodos para:
+
+adicionar_tarefa(tarefa: Tarefa)
+
+Valida o tipo antes de adicionar.
+listar_tarefas(...)
+
+Parâmetros:
+
+ordem_por: "prioridade" (padrão) ou "prazo".
+incluir_concluidas: bool.
+enumerar: se True, exibe numeradas.
+Ordenação usa prioridade.peso ou prazo.
+
+marcar_concluida(indice, valor=True, ...)
+
+Marca ou reabre tarefas pelo índice exibido.
+Persistência:
+
+salvar_csv(caminho) / carregar_csv(caminho)
+salvar_json(caminho) / carregar_json(caminho)
+Parte 5 — Utilitários de Parsing
+Implemente funções auxiliares:
+
+_parse_data_iso(s: str) -> date
+
+Aceita formato "YYYY-MM-DD" ou "DD/MM/YYYY",
+Qualquer outro formato deve levantar erro: raise ValueError(f"data inválida: {s!r}. Use YYYY-MM-DD (ou DD/MM/YYYY).").
+_parse_prioridade(s: str) -> Prioridade
+
+Converte string em Prioridade, ex.: 'ALTA' deve virar Prioridade.ALTA;
+Ignore maiúsculas e minúsculas.
+_parse_bool(s: str) -> bool
+
+Converte string ("s", "sim", "1", "true", etc.) em booleano.
+Parte 6 — CLI (Interface em Linha de Comando)
+Implemente um loop com menu textual:
+
+========== GERENCIADOR DE TAREFAS ==========
+1) Carregar CSV
+2) Carregar JSON
+3) Salvar CSV
+4) Salvar JSON
+5) Adicionar tarefa
+6) Listar por prioridade
+7) Listar por prazo
+8) Marcar tarefa como concluída
+9) Reabrir tarefa
+0) Sair
+Cada opção chama os métodos apropriados do GerenciadorTarefas.
+Ao adicionar tarefa, leia os dados do usuário (nome, prazo, prioridade, concluída).
+Exemplo de Uso Esperado
+========== GERENCIADOR DE TAREFAS ==========
+1) Carregar CSV
+2) Carregar JSON
+3) Salvar CSV
+4) Salvar JSON
+5) Adicionar tarefa
+6) Listar por prioridade
+7) Listar por prazo
+8) Marcar tarefa como concluída
+9) Reabrir tarefa
+0) Sair
+Escolha uma opção: 5
+Nome da tarefa: Preparar slides
+Prazo (YYYY-MM-DD ou DD/MM/YYYY): 25/09/2025
+Prioridade (ALTA/MEDIA/BAIXA) [padrão MEDIA]: ALTA
+Já concluída? (s/N): n
+Tarefa adicionada com sucesso!
+Ordenado por prioridade:
+ 1. [ALTA] 2025-09-25  Preparar slides  (concluída:  )
